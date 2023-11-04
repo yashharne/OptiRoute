@@ -38,8 +38,10 @@ def register():
 
 @bp.route('/login', methods=(['POST']))
 def login():
-        email = request.form['email']
-        password = request.form['password']
+        data=request.get_json()
+        print(data)
+        email = data.get('email')
+        password = data.get('password')
         db = get_db()
         error = None
 
@@ -85,3 +87,7 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+def _corsify_actual_response(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response

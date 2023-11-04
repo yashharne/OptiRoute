@@ -11,13 +11,15 @@ import { theme } from "../core/theme";
 import { emailValidator } from "../helpers/emailValidator";
 import { passwordValidator } from "../helpers/passwordValidator";
 import { nameValidator } from "../helpers/nameValidator";
+import axios from "axios";
+import { apiUrl } from "../helpers/apiUrl";
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState({ value: "", error: "" });
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
 
-  const onSignUpPressed = () => {
+  const onSignUpPressed = async() => {
     const nameError = nameValidator(name.value);
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
@@ -27,10 +29,38 @@ export default function RegisterScreen({ navigation }) {
       setPassword({ ...password, error: passwordError });
       return;
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Dashboard" }],
-    });
+    
+    try {
+      // Send a POST request to the Flask API's login route
+      const response = await axios.post(`${apiUrl}/auth/register`, {
+        name:name.value,
+        email: email.value,
+        password: password.value,
+      });
+  
+      // Check if the login was successful
+      if (response.status === 200) {
+        // Reset the navigation to the Dashboard
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Dashboard',
+            },
+          ],
+        });
+      } else {
+        // Handle login failure (e.g., show an error message)
+        // You can access the error message from the response data
+        console.log(response.data);
+      }
+    } catch (error) {
+      // Handle any network errors or exceptions
+      console.log(error);
+      console.log(error.stack);
+      console.log(error.message);
+
+    }
   };
 
   return (

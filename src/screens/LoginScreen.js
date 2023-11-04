@@ -10,7 +10,8 @@ import BackButton from "../components/BackButton";
 import { theme } from "../core/theme";
 import { emailValidator } from "../helpers/emailValidator";
 import { passwordValidator } from "../helpers/passwordValidator";
-import Geolocation from "react-native-geolocation-service";
+import axios from 'axios';
+import { apiUrl } from "../helpers/apiUrl";
 
 // ...
 
@@ -18,21 +19,7 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
 
-  // const onLoginPressed = () => {
-  //   const emailError = emailValidator(email.value);
-  //   const passwordError = passwordValidator(password.value);
-  //   if (emailError || passwordError) {
-  //     setEmail({ ...email, error: emailError });
-  //     setPassword({ ...password, error: passwordError });
-  //     return;
-  //   }
-  //   navigation.reset({
-  //     index: 0,
-  //     routes: [{ name: "Dashboard" }],
-  //   });
-  // };
-
-  const onLoginPressed = () => {
+  const onLoginPressed = async() => {
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
     if (emailError || passwordError) {
@@ -41,53 +28,37 @@ export default function LoginScreen({ navigation }) {
       return;
     }
 
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: "Dashboard",
-        },
-      ],
-    });
+    try {
+      // Send a POST request to the Flask API's login route
+      const response = await axios.post(`${apiUrl}/auth/login`, {
+        email: email.value,
+        password: password.value,
+      });
+  
+      // Check if the login was successful
+      if (response.status === 200) {
+        // Reset the navigation to the Dashboard
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Dashboard',
+            },
+          ],
+        });
+      } else {
+        // Handle login failure (e.g., show an error message)
+        // You can access the error message from the response data
+        console.log(response.data);
+      }
+    } catch (error) {
+      // Handle any network errors or exceptions
+      console.log(error);
+      console.log(error.stack);
+      console.log(error.message);
 
-    // Request the user's location
-    // Geolocation.getCurrentPosition(
-    //   (position) => {
-    //     // Get the latitude and longitude from the position
-    //     const { latitude, longitude } = position.coords;
+    }
 
-    //     // Navigate to the "Dashboard" screen while passing user location
-    //     navigation.reset({
-    //       index: 0,
-    //       routes: [
-    //         {
-    //           name: "Dashboard",
-    //           params: {
-    //             userLocation: { latitude, longitude },
-    //           },
-    //         },
-    //       ],
-    //     });
-    //     // navigation.navigate("Dashboard", { userLocation });
-    //   },
-    //   (error) => {
-    //     // Handle location request error here
-    //     console.log("Location request error: ", error);
-    //     // You may choose to navigate to the "Dashboard" without location
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [
-    //     {
-    //       name: "Dashboard",
-    //       params: {
-    //         userLocation: null, // Pass null when location request fails
-    //       },
-    //     },
-    //   ],
-    // });
-    //   },
-    //   { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-    // );
   };
 
   return (
@@ -130,7 +101,7 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.row}>
         <Text>Don’t have an account? </Text>
         <TouchableOpacity onPress={() => navigation.replace("RegisterScreen")}>
-          <Text style={styles.link}>Sign up</Text>
+          <Text style={styles.link} >Sign up</Text>
         </TouchableOpacity>
       </View>
     </Background>

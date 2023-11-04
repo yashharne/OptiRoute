@@ -116,6 +116,35 @@ export default function Dashboard({ navigation }) {
     setItemsList(updatedItems);
   };
 
+  const getRoute = async()=>{
+    try {
+      // Send a POST request to the Flask API's login route
+      const response = await axios.post(`${apiUrl}/route`, {
+        items: itemsList
+      });
+  
+      // Check if the login was successful
+      if (response.status === 200) {
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [
+        //     {
+        //       name: 'Dashboard',
+        //     },
+        //   ],
+        // });
+      } else {
+       console.log(response.data);
+      }
+    } catch (error) {
+      // Handle any network errors or exceptions
+      console.log(error);
+      console.log(error.stack);
+      console.log(error.message);
+
+    }
+  }
+
   const clearItems = () => {
     setItemsList([]);
     setClearList(true);
