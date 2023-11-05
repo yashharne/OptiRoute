@@ -2,8 +2,6 @@ import os
 
 from flask import Flask , jsonify
 
-from flaskr.db import get_db
-
 from flask_cors import CORS 
 
 import pandas as pd

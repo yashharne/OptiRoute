@@ -37,6 +37,8 @@ yarn-error.*
 
 .venv/
 
+myenv/
+
 *.pyc
 __pycache__/
 
@@ -45,6 +47,9 @@ instance/
 .pytest_cache/
 .coverage
 htmlcov/
+
+flask/flaskr/.env
+flask/flaskr/data
 
 dist/
 build/
