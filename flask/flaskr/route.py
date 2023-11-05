@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, jsonify
+    Blueprint, request, jsonify
 )
 from werkzeug.exceptions import abort
 
@@ -21,7 +21,7 @@ def create():
         filter_string = '(' + ','.join(['"' + item + '"' for item in items]) + ')'
 
         res = db.table('items').select("item_id , shop_id ,name , price , quantity  , shops(id , Name , latitude , longitude)").filter('name' , 'in' , filter_string).execute()
-        # Read JSON data into a Pandas DataFrame
+        
         df = pd.DataFrame(res.data)
 
         # Print the DataFrame
