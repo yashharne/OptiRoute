@@ -4,12 +4,13 @@ import os
 from dotenv import load_dotenv
 import pandas as pd
 
-df = pd.read_csv("flaskr/data/data.csv")
-
-items_numppy = df['name'].unique()
-items = items_numppy.tolist() + ["Home"]
 
 def find_path_points(start_lat, start_lon):
+    df = pd.read_csv("flaskr/data/data.csv")
+
+    items_numppy = df['name'].unique()
+    items = items_numppy.tolist() + ["Home"]
+
     shops = utils.convert_to_dict(df.to_json(orient='records'), start_lat, start_lon)
     lst = len(shops)
     

@@ -12,12 +12,13 @@ import { emailValidator } from "../helpers/emailValidator";
 import { passwordValidator } from "../helpers/passwordValidator";
 import axios from 'axios';
 import { apiUrl } from "../helpers/apiUrl";
+import Toast from "react-native-toast-message";
 
-// ...
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
+  // const toast = useToast();
 
   const onLoginPressed = async() => {
     const emailError = emailValidator(email.value);
@@ -38,6 +39,11 @@ export default function LoginScreen({ navigation }) {
       // Check if the login was successful
       if (response.status === 200) {
         // Reset the navigation to the Dashboard
+        Toast.show({
+          type: "startToast",
+          text1: "Hello, Welcome to OptiRoute! 👋",
+        });
+        
         navigation.reset({
           index: 0,
           routes: [
@@ -46,6 +52,8 @@ export default function LoginScreen({ navigation }) {
             },
           ],
         });
+
+
       } else {
         // Handle login failure (e.g., show an error message)
         // You can access the error message from the response data
