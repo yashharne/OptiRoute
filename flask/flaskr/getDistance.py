@@ -29,7 +29,7 @@ class utils:
             dist += utils.haversine(lat1, lon1, lat2, lon2)
         return dist
     
-    def convert_to_dict(json_data):
+    def convert_to_dict(json_data, start_lat, start_lon):
         shops = json.loads(json_data)
 
         for shop in shops:
@@ -37,6 +37,8 @@ class utils:
                 data_str = shop['shops']
                 data_dict = ast.literal_eval(data_str)
                 shop['shops'] = data_dict 
-          
+        add_end['shops']['latitude'] = start_lat
+        add_end['shops']['longitude'] = start_lon
+        
         shops.append(add_end)
         return shops

@@ -1,24 +1,35 @@
-from getDistance import utils
+from flaskr.getDistance import utils
 import math
 import os
 from dotenv import load_dotenv
 import pandas as pd
-
-load_dotenv()
-
-#Exampe usage
-start_lat = float(os.getenv("start_lat"))  # Starting latitude
-start_lon = float(os.getenv("start_lon"))  # Starting longitude
 
 df = pd.read_csv("flaskr/data/data.csv")
 
 items_numppy = df['name'].unique()
 items = items_numppy.tolist() + ["Home"]
 
-shops = utils.convert_to_dict(df.to_json(orient='records'))
-lst = len(shops)
-
-def optimised_tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon):
+def find_path_points(start_lat, start_lon):
+    shops = utils.convert_to_dict(df.to_json(orient='records'), start_lat, start_lon)
+    lst = len(shops)
+    
+    result, total_dist = optimised_tsp_with_hieuristic(shops, items, start_lat, start_lon, lst)
+    print(total_dist)
+    print(result)
+    
+    formatted_best_path = []
+    for coord, item, shop in result:
+        formatted_coord = {
+            "coordinates": {
+                "Latitude": coord[0],
+                "Longitude": coord[1]
+            },
+            "Item": item
+        }
+        formatted_best_path.append(formatted_coord)
+    return formatted_best_path
+    
+def optimised_tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon, lst):
     
     num_items = len(items_to_visit)      # Calculate the number of unique items to visit
     all_items_mask = (1 << num_items) - 1   # Create a bitmask to represent visited items
@@ -66,8 +77,3 @@ def optimised_tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon):
     shortest_path = [((start_lat, start_lon), "Start", "Home")] + shortest_path
     return shortest_path, shortest_distance
 
-result, total_dist = optimised_tsp_with_hieuristic(shops,items,start_lat, start_lon)
-
-print("Total distance: ", total_dist)
-for coord, item, shop in result:
-    print(coord[0], coord[1], ", ", shop, ", ", item)

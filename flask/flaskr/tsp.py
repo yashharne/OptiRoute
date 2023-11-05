@@ -9,18 +9,28 @@ import json
 import ast
 from getDistance import utils
 
-load_dotenv()
-
-# Example usage:
-start_lat = float(os.getenv("start_lat"))  # Starting latitude
-start_lon = float(os.getenv("start_lon"))  # Starting longitude
-
 df = pd.read_csv("flaskr/data/data.csv")
-items_to_visit = df['name'].unique()
+items = df['name'].unique()
 
-shops = utils.convert_to_dict(df.to_json(orient='records'))
+def find_path_points(start_lat, start_lon):
+    shops = utils.convert_to_dict(df.to_json(orient='records'), start_lat, start_lon)
 
-def generateRoute(shops , items_to_visit):
+    result = generateRoute(shops, items, start_lat, start_lon)
+    print(result)
+    
+    formatted_best_path = []
+    for coord, item in result:
+        formatted_coord = {
+            "coordinates": {
+                "Latitude": coord[0],
+                "Longitude": coord[1]
+            },
+            "Item": item
+        }
+        formatted_best_path.append(formatted_coord)
+    return formatted_best_path
+
+def generateRoute(shops , items_to_visit, start_lat, start_lon):
     # Function to find the shortest path visiting unique items
     def tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon):
         # Helper function to recursively find the shortest path with constraints
@@ -53,9 +63,4 @@ def generateRoute(shops , items_to_visit):
         return shortest_path[0]
 
     best_path = tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon)
-    print("Best path found:")
-    for (lat, lon), item,name in best_path:
-        print(f"Latitude: {lat}, Longitude: {lon}, Name: {name}")
-
-
-generateRoute(shops , items_to_visit)
+    return best_path
