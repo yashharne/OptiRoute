@@ -22,7 +22,7 @@ shops = utils.convert_to_dict(df.to_json(orient='records'))
 
 def generateRoute(shops , items_to_visit):
     # Function to find the shortest path visiting unique items
-    def tsp_with_items(shops, items_to_visit, start_lat, start_lon):
+    def tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon):
         # Helper function to recursively find the shortest path with constraints
         def backtrack(current_path, current_distance, visited_items):
             if set(visited_items) == set(items_to_visit):
@@ -32,10 +32,10 @@ def generateRoute(shops , items_to_visit):
                     shortest_path[0] = current_path[:]
                 return
 
-            last_visited_coords, _a, _b = current_path[-1]
+            last_visited_coords, _, __ = current_path[-1]
             for shop in shops:
                 shop_coords = (shop['shops']['latitude'], shop['shops']['longitude'])
-                if shop_coords not in [coord for coord, _a,_b in current_path] and shop['name'] not in visited_items:
+                if shop_coords not in [coord for coord, _ ,__ in current_path] and shop['name'] not in visited_items:
                     # Calculate distance from the last visited node to the current shop
                     new_distance = current_distance + shop['price']+utils.haversine(last_visited_coords[0], last_visited_coords[1], shop_coords[0], shop_coords[1])
                     new_path = current_path + [(shop_coords, shop['name'], shop['shops']['Name'])]
@@ -52,7 +52,7 @@ def generateRoute(shops , items_to_visit):
 
         return shortest_path[0]
 
-    best_path = tsp_with_items(shops, items_to_visit, start_lat, start_lon)
+    best_path = tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon)
     print("Best path found:")
     for (lat, lon), item,name in best_path:
         print(f"Latitude: {lat}, Longitude: {lon}, Name: {name}")
