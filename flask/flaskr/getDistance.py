@@ -2,6 +2,9 @@ import math
 import json
 import ast
 
+add_end = {'name': 'Home','price' : 0,
+            'shops': {'Name': 'End', 'latitude' : 18.46413156,'longitude': 73.83249422 }}
+
 class utils:
     def haversine(lat1, lon1, lat2, lon2):
         # Radius of the Earth in kilometers
@@ -33,5 +36,7 @@ class utils:
             if 'shops' in shop:
                 data_str = shop['shops']
                 data_dict = ast.literal_eval(data_str)
-                shop['shops'] = data_dict   
+                shop['shops'] = data_dict 
+          
+        shops.append(add_end)
         return shops

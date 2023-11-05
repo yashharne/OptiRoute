@@ -15,8 +15,8 @@ df = pd.read_csv("flaskr/data/data.csv")
 items_numppy = df['name'].unique()
 items = items_numppy.tolist() + ["Home"]
 
-
 shops = utils.convert_to_dict(df.to_json(orient='records'))
+lst = len(shops)
 
 def optimised_tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon):
     
@@ -25,6 +25,8 @@ def optimised_tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon):
 
     # Helper function to recursively find the shortest path using hieuristics like  A*.
     def dp(mask, last_shop_coord, last_shop_index):
+        if  last_shop_index == lst and mask != all_items_mask:
+            return float('inf'), []
         if mask == all_items_mask:
             return 0, []  # All unique items have been visited
 
@@ -45,7 +47,7 @@ def optimised_tsp_with_hieuristic(shops, items_to_visit, start_lat, start_lon):
 
             if not (mask & (1 << item_index)): # If the item hasn't been visited yet
                 new_mask = mask | (1 << item_index)
-                distance_travel = utils.haversine(last_shop_coord[0], last_shop_coord[1], shop_coords[0], shop_coords[1])
+                distance_travel = shop['price'] + utils.haversine(last_shop_coord[0], last_shop_coord[1], shop_coords[0], shop_coords[1])
                 dist, path = dp(new_mask, shop_coords, shop_index + 1)
 
                 if dist + distance_travel < shortest_distance:
