@@ -6,7 +6,6 @@ const itemData = [
   { label: "Curd", value: "Curd" },
   { label: "Rice", value: "Rice" },
   { label: "Pasta", value: "Pasta" },
-  { label: "Soft drinks", value: "Soft drinks" },
   { label: "Flour", value: "Flour" },
   { label: "Lentils", value: "Lentils" },
 ];

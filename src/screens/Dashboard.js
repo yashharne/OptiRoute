@@ -11,7 +11,7 @@ import itemData from "../components/ItemData";
 import axios from "axios";
 import { apiUrl } from "../helpers/apiUrl";
 import { useToast } from "react-native-toast-notifications";
-import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+import Toast from "react-native-toast-message";
 
 
 export default function Dashboard({ navigation }) {
@@ -154,7 +154,7 @@ export default function Dashboard({ navigation }) {
     };
 
     const originStr = `${origin.latitude},${origin.longitude}`;
-    const destinationStr = `${destination.latitude},${destination.longitude}`;
+    const destinationStr = `${origin.latitude},${origin.longitude}`
 
     const waypointsStr = intermediatePoints
       .map((point) => `${point.latitude},${point.longitude}`)

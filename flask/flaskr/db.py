@@ -1,5 +1,5 @@
 import sqlite3
-
+import os
 import click
 from flask import current_app, g
 from supabase import create_client, Client
@@ -8,8 +8,8 @@ from supabase import create_client, Client
 
 def get_db():
     if 'db' not in g:
-        url: str = 'https://bfgckhvkvehgsitmiafk.supabase.co'
-        key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmZ2NraHZrdmVoZ3NpdG1pYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTg4MjY5OTgsImV4cCI6MjAxNDQwMjk5OH0.JFaiMlq3E5wDw4k_XWOk_4eyH2NzBPfFwxTArul0Pqc'
+        url = os.environ.get('DATABASE_URL')
+        key = os.environ.get('API_KEY')
         g.db = create_client(url, key)
         # g.db.row_factory = sqlite3.Row
 
